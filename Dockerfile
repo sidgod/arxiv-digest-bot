@@ -1,7 +1,7 @@
 # Multi-stage build for arXiv Digest Bot
 # Optimized for Raspberry Pi (ARM64)
 
-FROM python:3.11-slim-bookworm as builder
+FROM python:3.11-slim-bookworm AS builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \

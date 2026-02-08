@@ -21,8 +21,8 @@ run_sqlite() {
     if command -v sqlite3 &> /dev/null; then
         sqlite3 "$DB" "$@"
     else
-        # Use Docker with sqlite3
-        docker run --rm -v "$DB_PATH:/db.db" -v "$(pwd)/$OUTPUT_DIR:/exports" keinos/sqlite3 sqlite3 /db.db "$@"
+        # Use Docker with sqlite3, pass stdin through
+        docker run --rm -i -v "$DB_PATH:/db.db" -v "$(pwd)/$OUTPUT_DIR:/exports" keinos/sqlite3 sqlite3 /db.db "$@"
     fi
 }
 

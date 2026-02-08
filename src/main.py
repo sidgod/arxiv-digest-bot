@@ -109,6 +109,15 @@ def ingest_mode(config: Config) -> int:
         if not papers:
             logger.info("No new papers found since last ingest")
             storage.log_run("ingest", 0, "no_papers")
+
+            # Send notification even when no papers found (so user knows it ran)
+            notifier.send_success_notification("ingest", {
+                "Papers Fetched": 0,
+                "Status": "No new papers since last run",
+                "Categories": ", ".join(config.arxiv_categories),
+                "Last Ingest": last_ingest_time.strftime('%Y-%m-%d %H:%M') if last_ingest_time else "First run",
+            })
+
             return 5
 
         # Filter out already processed/pending papers (defensive check)
@@ -117,6 +126,15 @@ def ingest_mode(config: Config) -> int:
         if not new_papers:
             logger.info(f"All {len(papers)} papers already in database, nothing new to add")
             storage.log_run("ingest", 0, "no_papers")
+
+            # Send notification (papers were fetched but already in DB)
+            notifier.send_success_notification("ingest", {
+                "Papers Fetched": 0,
+                "Status": f"All {len(papers)} papers already in database",
+                "Categories": ", ".join(config.arxiv_categories),
+                "Last Ingest": last_ingest_time.strftime('%Y-%m-%d %H:%M') if last_ingest_time else "First run",
+            })
+
             return 5
 
         # Add to pending
@@ -185,6 +203,15 @@ def digest_mode(config: Config) -> int:
         if not pending_papers:
             logger.info("No pending papers to process")
             storage.log_run("digest", 0, "no_papers")
+
+            # Send notification even when no papers (so user knows it ran)
+            notifier.send_success_notification("digest", {
+                "Papers Summarized": 0,
+                "Status": "No pending papers to process",
+                "Recipients": len(config.email_to),
+                "Keywords Configured": len(config.interest_keywords) if config.interest_keywords else 0,
+            })
+
             return 5
 
         logger.info(f"Processing {len(pending_papers)} pending papers")
@@ -207,9 +234,19 @@ def digest_mode(config: Config) -> int:
         if not ranked_papers:
             logger.info(f"No papers matched interest keywords from {len(pending_papers)} pending papers")
             storage.log_run("digest", 0, "no_matches")
+
             # Still mark papers as processed so they don't accumulate
             storage.mark_papers_processed(pending_papers, datetime.utcnow(), [])
             storage.clear_pending_papers()
+
+            # Send notification (so user knows why no digest was sent)
+            notifier.send_success_notification("digest", {
+                "Papers Summarized": 0,
+                "Status": f"No papers matched keywords from {len(pending_papers)} pending",
+                "Recipients": len(config.email_to),
+                "Keywords": ", ".join(config.interest_keywords) if config.interest_keywords else "None",
+            })
+
             return 5
 
         # Select top N
