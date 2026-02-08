@@ -1,0 +1,23 @@
+services:
+  arxiv-digest:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: arxiv-digest-bot:latest
+    container_name: arxiv-digest
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    restart: "no"  # For cron-triggered execution
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    # Override command for different modes
+    # docker compose run --rm arxiv-digest --mode=ingest
+    # docker compose run --rm arxiv-digest --mode=digest
