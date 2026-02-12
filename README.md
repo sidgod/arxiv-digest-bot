@@ -1,5 +1,8 @@
 # arXiv Digest Bot 📧🤖
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Built with Claude](https://img.shields.io/badge/Built%20with-Claude%20Cowork-7C3AED)](https://claude.ai)
+
 **Automated weekly digest of AI/ML research papers from arXiv, powered by Claude AI.**
 
 Never miss important papers again! This bot fetches papers daily, ranks them by your interests, and sends you a beautifully formatted weekly email digest with AI-generated summaries.
@@ -27,7 +30,7 @@ Never miss important papers again! This bot fetches papers daily, ranks them by 
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/arxiv-digest-bot.git
+git clone https://github.com/sidgod/arxiv-digest-bot.git
 cd arxiv-digest-bot
 ```
 
@@ -310,7 +313,15 @@ Contributions welcome! Please:
 
 ## 📄 License
 
-MIT License - feel free to use for personal or commercial projects.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+You are free to:
+- ✅ Use commercially
+- ✅ Modify and distribute
+- ✅ Use privately
+- ✅ Sublicense
+
+The only requirement is to include the original copyright notice and license in any copy of the software.
 
 ## 🙏 Acknowledgments
 
