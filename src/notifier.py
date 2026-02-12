@@ -98,8 +98,8 @@ class EmailNotifier:
 
         html_body = self._render_digest_html(summarized_papers, total_papers_fetched, date_range, interest_keywords)
 
-        logger.info(f"Sending digest to {len(self.digest_recipients)} recipient(s)")
-        self._send_email(self.digest_recipients, subject, html_body)
+        logger.info(f"Sending digest to {len(self.digest_recipients)} recipient(s) via BCC")
+        self._send_email(self.digest_recipients, subject, html_body, use_bcc=True)
         logger.info("Digest email sent successfully")
 
     def send_error_notification(self, error_details: ErrorDetails) -> None:
@@ -149,7 +149,7 @@ class EmailNotifier:
             logger.error(f"Failed to send success notification: {e}")
             # Don't raise - notification failure shouldn't crash the job
 
-    def _send_email(self, recipients: List[str], subject: str, html_body: str, max_retries: int = 3) -> None:
+    def _send_email(self, recipients: List[str], subject: str, html_body: str, max_retries: int = 3, use_bcc: bool = False) -> None:
         """
         Send email with retry logic.
 
@@ -158,13 +158,22 @@ class EmailNotifier:
             subject: Email subject
             html_body: HTML email body
             max_retries: Maximum retry attempts
+            use_bcc: If True, send via BCC (privacy-preserving for multiple recipients)
 
         Raises:
             SystemExit: If email sending fails after retries
         """
         msg = MIMEMultipart("alternative")
         msg["From"] = self.email_from
-        msg["To"] = ", ".join(recipients)
+
+        if use_bcc:
+            # For BCC: show sender in To field, hide actual recipients
+            msg["To"] = self.email_from
+            msg["Bcc"] = ", ".join(recipients)
+        else:
+            # For direct emails (notifications): show recipient in To field
+            msg["To"] = ", ".join(recipients)
+
         msg["Subject"] = subject
 
         msg.attach(MIMEText(html_body, "html"))

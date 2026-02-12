@@ -43,7 +43,7 @@ class ArxivScraper:
         self.search_query = search_query
         # Configure client with reasonable timeouts
         self.client = arxiv.Client(
-            page_size=100,  # Fetch more per request to reduce number of calls
+            page_size=50,  # Balanced: fast enough to avoid timeouts, still efficient
             delay_seconds=3,  # Respect rate limits
             num_retries=3,  # Built-in retries
         )
